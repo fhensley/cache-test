@@ -17,8 +17,10 @@ import org.slf4j.LoggerFactory;
 public class CacheProvider implements Serializable {
     private static final Logger logger       = LoggerFactory.getLogger(CacheProvider.class);
     private CacheManager        cacheManager = new CacheManager();
+    private Ehcache             cache;
 
     public CacheProvider() {
+        cache = cacheManager.getEhcache("colors");
     }
 
     private Ehcache getCache() {
@@ -30,7 +32,8 @@ public class CacheProvider implements Serializable {
         // cacheConfiguration.terracotta(terracottaConfiguration);
         // cacheManager.addCache(new Cache(cacheConfiguration));
         // }
-        return cacheManager.getEhcache("color");
+
+        return cache;
     }
 
     public Element getColour(Long id) {
@@ -39,5 +42,9 @@ public class CacheProvider implements Serializable {
 
     public void putColour(Element element) {
         getCache().put(element);
+    }
+
+    public void shutdown() {
+        cacheManager.shutdown();
     }
 }
